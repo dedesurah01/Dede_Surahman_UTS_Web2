@@ -65,7 +65,7 @@ Sistem ini dibangun sebagai proyek **Full Client-Side** menggunakan arsitektur r
 
 Aplikasi telah berhasil dideploy dan dapat diakses secara publik melalui tautan berikut:
 
-👉 [**Live Demo Cireng Isi di GitHub Pages**]([https://phrdin.github.io/Pahrudin_UTS_Web2/](https://dedesurah01.github.io/Dede_Surahman_UTS_Web2/))
+👉 [**Live Demo Cireng Isi di GitHub Pages**]([https://dedesurah01.github.io/Dede_Surahman_UTS_Web2/])
 
 ---
 
