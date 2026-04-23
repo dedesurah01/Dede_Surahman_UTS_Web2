@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cireng Isi - Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+
+  <!-- Sidebar + Layout -->
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-56 bg-white dark:bg-gray-800 shadow-sm flex flex-col shrink-0 hidden md:flex">
+      <div class="p-5 border-b border-gray-100 dark:border-gray-700">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🥟</span>
+          <div>
+            <p class="font-black text-orange-600 dark:text-orange-400 text-sm">Cireng Isi</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">Admin Panel</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-3 space-y-1">
+        <button onclick="showTab('dashboard')" class="nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition active-nav" id="nav-dashboard">
+          📊 Dashboard
+        </button>
+        <button onclick="showTab('orders')" class="nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition" id="nav-orders">
+          📦 Pesanan
+        </button>
+        <button onclick="showTab('users')" class="nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition" id="nav-users">
+          👥 Pengguna
+        </button>
+        <button onclick="showTab('products')" class="nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition" id="nav-products">
+          🥟 Produk
+        </button>
+      </nav>
+      <div class="p-3 border-t border-gray-100 dark:border-gray-700">
+        <a href="shop.html" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-orange-500 transition">🏪 Lihat Toko</a>
+        <button onclick="Auth.logout()" class="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-600 transition w-full text-left">🚪 Keluar</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top bar -->
+      <header class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex items-center justify-between">
+        <h1 id="page-title" class="text-lg font-bold text-gray-800 dark:text-white">Dashboard</h1>
+        <div class="flex items-center gap-2">
+          <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
+          <span id="admin-name" class="text-sm font-semibold text-gray-700 dark:text-gray-300"></span>
+        </div>
+      </header>
+
+      <!-- Mobile nav -->
+      <div class="md:hidden bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex overflow-x-auto">
+        <button onclick="showTab('dashboard')" class="mobile-nav flex-1 py-2 text-xs font-semibold text-center text-orange-500 border-b-2 border-orange-500" id="mnav-dashboard">📊 Dashboard</button>
+        <button onclick="showTab('orders')" class="mobile-nav flex-1 py-2 text-xs font-semibold text-center text-gray-500 dark:text-gray-400" id="mnav-orders">📦 Pesanan</button>
+        <button onclick="showTab('users')" class="mobile-nav flex-1 py-2 text-xs font-semibold text-center text-gray-500 dark:text-gray-400" id="mnav-users">👥 Users</button>
+        <button onclick="showTab('products')" class="mobile-nav flex-1 py-2 text-xs font-semibold text-center text-gray-500 dark:text-gray-400" id="mnav-products">🥟 Produk</button>
+      </div>
+
+      <main class="flex-1 p-4 md:p-6 overflow-auto">
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Pesanan</p>
+              <p id="stat-orders" class="text-3xl font-black text-orange-600 dark:text-orange-400">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Pendapatan</p>
+              <p id="stat-revenue" class="text-xl font-black text-green-600 dark:text-green-400">Rp 0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Pengguna</p>
+              <p id="stat-users" class="text-3xl font-black text-blue-600 dark:text-blue-400">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Produk</p>
+              <p id="stat-products" class="text-3xl font-black text-purple-600 dark:text-purple-400">0</p>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5">
+            <h2 class="font-bold text-gray-800 dark:text-white mb-4">📋 Pesanan Terbaru</h2>
+            <div id="recent-orders" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" class="hidden">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-bold text-gray-800 dark:text-white">Semua Pesanan</h2>
+              <input type="text" id="order-search" placeholder="Cari ID / nama..." 
+                class="text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400 w-48">
+            </div>
+            <div id="all-orders" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="hidden">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5">
+            <h2 class="font-bold text-gray-800 dark:text-white mb-4">Daftar Pengguna</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-left text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+                    <th class="pb-3 font-semibold">Nama</th>
+                    <th class="pb-3 font-semibold">Email</th>
+                    <th class="pb-3 font-semibold">Role</th>
+                    <th class="pb-3 font-semibold">Bergabung</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table" class="divide-y divide-gray-50 dark:divide-gray-700"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="tab-products" class="hidden">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5">
+            <h2 class="font-bold text-gray-800 dark:text-white mb-4">Daftar Produk</h2>
+            <div id="admin-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    const user = Utils.requireAuth();
+    if (user && user.role !== 'admin') {
+      Utils.showToast('Akses ditolak!', 'error');
+      setTimeout(() => window.location.href = 'shop.html', 1000);
+    }
+    Utils.initDarkMode();
+    if (user) document.getElementById('admin-name').textContent = user.name;
+
+    let allOrders = [];
+
+    async function init() {
+      await Products.load();
+      allOrders = Orders.getOrders();
+      renderDashboard();
+      renderAllOrders();
+      renderUsers();
+      renderAdminProducts();
+    }
+
+    function renderDashboard() {
+      const orders = Orders.getOrders();
+      const users = Auth.getUsers();
+      const revenue = orders.reduce((s, o) => s + o.total, 0);
+
+      document.getElementById('stat-orders').textContent = orders.length;
+      document.getElementById('stat-revenue').textContent = Utils.formatRupiah(revenue);
+      document.getElementById('stat-users').textContent = users.length;
+      document.getElementById('stat-products').textContent = Products.all.length;
+
+      const recent = orders.slice(0, 5);
+      document.getElementById('recent-orders').innerHTML = recent.length === 0
+        ? '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">Belum ada pesanan</p>'
+        : recent.map(o => `
+          <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700">
+            <div>
+              <p class="font-mono text-xs text-gray-400 dark:text-gray-500">${o.id}</p>
+              <p class="text-sm font-semibold text-gray-800 dark:text-white">${o.customer.name}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-orange-600 dark:text-orange-400">${Utils.formatRupiah(o.total)}</p>
+              <span class="text-xs font-bold px-2 py-0.5 rounded-full ${Orders.getStatusBadge(o.status)}">${o.status}</span>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function renderAllOrders(filter = '') {
+      const orders = filter
+        ? allOrders.filter(o => o.id.toLowerCase().includes(filter) || o.customer.name.toLowerCase().includes(filter))
+        : allOrders;
+
+      document.getElementById('all-orders').innerHTML = orders.length === 0
+        ? '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-8">Tidak ada pesanan</p>'
+        : orders.map(o => `
+          <div class="border border-gray-100 dark:border-gray-700 rounded-xl p-4">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <p class="font-mono text-xs text-gray-400 dark:text-gray-500">${o.id}</p>
+                <p class="font-semibold text-gray-800 dark:text-white text-sm">${o.customer.name} · ${o.customer.phone}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">${o.customer.address}</p>
+              </div>
+              <div class="text-right shrink-0 ml-2">
+                <p class="font-bold text-orange-600 dark:text-orange-400">${Utils.formatRupiah(o.total)}</p>
+                <select onchange="updateOrderStatus('${o.id}', this.value)"
+                  class="text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400">
+                  ${['Diproses','Dikirim','Selesai','Dibatalkan'].map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 dark:text-gray-500">${o.items.length} item · ${o.customer.payment} · ${new Date(o.createdAt).toLocaleDateString('id-ID')}</p>
+          </div>
+        `).join('');
+    }
+
+    function updateOrderStatus(orderId, status) {
+      const orders = Orders.getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.status = status;
+        localStorage.setItem(Orders.ORDERS_KEY, JSON.stringify(orders));
+        allOrders = orders;
+        Utils.showToast(`Status diperbarui: ${status}`, 'success');
+      }
+    }
+
+    function renderUsers() {
+      const users = Auth.getUsers();
+      document.getElementById('users-table').innerHTML = users.map(u => `
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+          <td class="py-3 font-semibold text-gray-800 dark:text-white">${u.name}</td>
+          <td class="py-3 text-gray-600 dark:text-gray-400">${u.email}</td>
+          <td class="py-3">
+            <span class="text-xs font-bold px-2 py-1 rounded-full ${u.role === 'admin' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'}">${u.role}</span>
+          </td>
+          <td class="py-3 text-gray-500 dark:text-gray-400 text-xs">${new Date(u.createdAt).toLocaleDateString('id-ID')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminProducts() {
+      document.getElementById('admin-products').innerHTML = Products.all.map(p => {
+        const imgSrc = Products.getImage(p);
+        const hasOverride = JSON.parse(localStorage.getItem(Products.IMAGES_KEY) || '{}')[p.id];
+        return `
+          <div class="border border-gray-100 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-3">
+            <!-- Image preview + upload zone -->
+            <div class="relative group/img cursor-pointer" onclick="document.getElementById('upload-${p.id}').click()">
+              <img id="img-preview-${p.id}" src="${imgSrc}" alt="${p.nama}"
+                class="w-full h-40 object-cover rounded-lg"
+                onerror="this.src='https://via.placeholder.com/300x160?text=Cireng'">
+              <!-- Overlay -->
+              <div class="absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
+                <span class="text-white text-2xl">📷</span>
+                <span class="text-white text-xs font-semibold">Ganti Gambar</span>
+              </div>
+              ${hasOverride ? `
+                <button onclick="event.stopPropagation(); resetImage(${p.id})"
+                  class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-semibold transition opacity-0 group-hover/img:opacity-100">
+                  ✕ Reset
+                </button>` : ''}
+            </div>
+            <!-- Hidden file input -->
+            <input type="file" id="upload-${p.id}" accept="image/*" class="hidden"
+              onchange="handleImageUpload(event, ${p.id})">
+            <!-- Info -->
+            <div>
+              <p class="font-semibold text-gray-800 dark:text-white text-sm truncate">${p.nama}</p>
+              <p class="text-orange-500 font-bold text-sm">${Utils.formatRupiah(p.price)}</p>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-xs text-gray-400 dark:text-gray-500 capitalize">${p.category}</span>
+                <span class="text-xs ${p.stock <= 10 ? 'text-red-500 font-bold' : 'text-green-600'}">Stok: ${p.stock}</span>
+                ${hasOverride ? '<span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-1.5 py-0.5 rounded font-semibold">Custom</span>' : ''}
+              </div>
+            </div>
+            <!-- Upload button -->
+            <button onclick="document.getElementById('upload-${p.id}').click()"
+              class="w-full text-xs border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-orange-400 dark:hover:border-orange-500 text-gray-500 dark:text-gray-400 hover:text-orange-500 py-2 rounded-lg transition font-semibold">
+              📁 Pilih Gambar Baru
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleImageUpload(event, productId) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate type
+      if (!file.type.startsWith('image/')) {
+        Utils.showToast('File harus berupa gambar!', 'error');
+        return;
+      }
+      // Validate size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        Utils.showToast('Ukuran gambar maksimal 2MB!', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result;
+        Products.saveImage(productId, base64);
+        // Update preview immediately
+        const preview = document.getElementById(`img-preview-${productId}`);
+        if (preview) preview.src = base64;
+        Utils.showToast('Gambar berhasil diperbarui!', 'success');
+        // Re-render to show Custom badge & reset button
+        renderAdminProducts();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetImage(productId) {
+      if (!confirm('Reset gambar ke default?')) return;
+      Products.removeImage(productId);
+      renderAdminProducts();
+      Utils.showToast('Gambar direset ke default', 'info');
+    }
+
+    function showTab(tab) {
+      ['dashboard', 'orders', 'users', 'products'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+        const navBtn = document.getElementById(`nav-${t}`);
+        const mnavBtn = document.getElementById(`mnav-${t}`);
+        if (navBtn) {
+          navBtn.className = `nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition ${t === tab ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`;
+        }
+        if (mnavBtn) {
+          mnavBtn.className = `mobile-nav flex-1 py-2 text-xs font-semibold text-center ${t === tab ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 dark:text-gray-400'}`;
+        }
+      });
+
+      const titles = { dashboard: 'Dashboard', orders: 'Semua Pesanan', users: 'Pengguna', products: 'Produk' };
+      document.getElementById('page-title').textContent = titles[tab];
+    }
+
+    // Order search
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchEl = document.getElementById('order-search');
+      if (searchEl) {
+        searchEl.addEventListener('input', e => renderAllOrders(e.target.value.toLowerCase()));
+      }
+    });
+
+    // Set initial active nav
+    document.getElementById('nav-dashboard').className = 'nav-btn w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-left transition bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400';
+
+    init();
+  </script>
+</body>
+</html>

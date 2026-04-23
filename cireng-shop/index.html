@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cireng Isi - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+  <style>
+    .bg-pattern { background-image: radial-gradient(circle at 20% 50%, rgba(251,146,60,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(249,115,22,0.1) 0%, transparent 50%); }
+  </style>
+</head>
+<body class="min-h-screen bg-orange-50 dark:bg-gray-900 bg-pattern transition-colors duration-300">
+
+  <!-- Dark mode toggle -->
+  <button id="dark-toggle" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-xl hover:scale-110 transition-transform">🌙</button>
+
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-orange-500 rounded-2xl shadow-lg mb-4">
+          <span class="text-4xl">🥟</span>
+        </div>
+        <h1 class="text-3xl font-black text-orange-600 dark:text-orange-400">Cireng Isi</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Camilan Kenyal Favorit Keluarga</p>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8">
+        <!-- Tabs -->
+        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-xl p-1 mb-6">
+          <button id="tab-login" onclick="switchTab('login')"
+            class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all bg-white dark:bg-gray-600 text-orange-600 dark:text-orange-400 shadow">
+            Masuk
+          </button>
+          <button id="tab-register" onclick="switchTab('register')"
+            class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all text-gray-500 dark:text-gray-400">
+            Daftar
+          </button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <input type="email" id="login-email" required placeholder="email@contoh.com"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Password</label>
+            <div class="relative">
+              <input type="password" id="login-password" required placeholder="••••••••"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+              <button type="button" onclick="togglePwd('login-password', this)" class="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 text-sm">👁</button>
+            </div>
+          </div>
+          <div id="login-error" class="hidden mb-4 p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+          <button type="submit"
+            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-all hover:shadow-lg active:scale-95">
+            Masuk Sekarang
+          </button>
+          <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-4">
+            Demo: admin@cireng.com / admin123
+          </p>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap</label>
+            <input type="text" id="reg-name" required placeholder="Nama kamu"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <input type="email" id="reg-email" required placeholder="email@contoh.com"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Password <span class="text-gray-400 font-normal">(min. 6 karakter)</span></label>
+            <div class="relative">
+              <input type="password" id="reg-password" required placeholder="••••••••"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+              <button type="button" onclick="togglePwd('reg-password', this)" class="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 text-sm">👁</button>
+            </div>
+          </div>
+          <div id="reg-error" class="hidden mb-4 p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+          <button type="submit"
+            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-all hover:shadow-lg active:scale-95">
+            Daftar Sekarang
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    Utils.redirectIfLoggedIn();
+    Utils.initDarkMode();
+
+    function switchTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('login-form').classList.toggle('hidden', !isLogin);
+      document.getElementById('register-form').classList.toggle('hidden', isLogin);
+      document.getElementById('tab-login').className = `flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${isLogin ? 'bg-white dark:bg-gray-600 text-orange-600 dark:text-orange-400 shadow' : 'text-gray-500 dark:text-gray-400'}`;
+      document.getElementById('tab-register').className = `flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${!isLogin ? 'bg-white dark:bg-gray-600 text-orange-600 dark:text-orange-400 shadow' : 'text-gray-500 dark:text-gray-400'}`;
+    }
+
+    function togglePwd(id, btn) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? '👁' : '🙈';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const result = Auth.login(email, password);
+      const errEl = document.getElementById('login-error');
+      if (!result.success) {
+        errEl.textContent = result.message;
+        errEl.classList.remove('hidden');
+        return;
+      }
+      errEl.classList.add('hidden');
+      Utils.showToast(`Selamat datang, ${result.user.name}!`, 'success');
+      setTimeout(() => {
+        window.location.href = result.user.role === 'admin' ? 'admin.html' : 'shop.html';
+      }, 800);
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const result = Auth.register(name, email, password);
+      const errEl = document.getElementById('reg-error');
+      if (!result.success) {
+        errEl.textContent = result.message;
+        errEl.classList.remove('hidden');
+        return;
+      }
+      errEl.classList.add('hidden');
+      Utils.showToast(result.message, 'success');
+      setTimeout(() => switchTab('login'), 1000);
+    }
+  </script>
+</body>
+</html>
