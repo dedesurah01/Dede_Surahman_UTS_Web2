@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cireng Isi - Riwayat Pesanan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <a href="shop.html" class="flex items-center gap-2">
+        <span class="text-2xl">🥟</span>
+        <span class="font-black text-orange-600 dark:text-orange-400 text-lg">Cireng Isi</span>
+      </a>
+      <div class="flex items-center gap-2">
+        <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
+        <a href="cart.html" class="relative w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">
+          🛒
+          <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+        </a>
+        <a id="admin-link" href="admin.html" class="hidden text-sm font-semibold bg-orange-500 text-white px-3 py-1.5 rounded-xl hover:bg-orange-600 transition">⚙️ Admin</a>
+        <a href="shop.html" class="text-sm text-orange-500 hover:text-orange-700 font-semibold">← Belanja</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-black text-gray-800 dark:text-white">📦 Riwayat Pesanan</h1>
+      <span id="order-count" class="text-sm text-gray-500 dark:text-gray-400"></span>
+    </div>
+
+    <!-- Empty -->
+    <div id="orders-empty" class="hidden text-center py-20">
+      <div class="text-7xl mb-4">📦</div>
+      <p class="text-gray-500 dark:text-gray-400 text-xl font-semibold">Belum ada pesanan</p>
+      <p class="text-gray-400 dark:text-gray-500 text-sm mt-2 mb-6">Yuk, mulai pesan cireng favoritmu!</p>
+      <a href="shop.html" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-xl transition inline-block">Mulai Belanja</a>
+    </div>
+
+    <!-- Orders list -->
+    <div id="orders-list" class="space-y-4"></div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div id="detail-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeDetailModal(event)">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 relative">
+      <button onclick="document.getElementById('detail-modal').classList.add('hidden')"
+        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition">✕</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script>
+    const user = Utils.requireAuth();
+    Utils.initDarkMode();
+    Utils.updateCartBadge();
+    if (user && user.role === 'admin') {
+      const adminLink = document.getElementById('admin-link');
+      adminLink.classList.remove('hidden');
+      adminLink.classList.add('flex');
+    }
+
+    function renderOrders() {
+      const orders = Orders.getUserOrders(user.id);
+      const empty = document.getElementById('orders-empty');
+      const list = document.getElementById('orders-list');
+
+      document.getElementById('order-count').textContent = `${orders.length} pesanan`;
+
+      if (orders.length === 0) {
+        empty.classList.remove('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      list.innerHTML = orders.map(order => {
+        const date = new Date(order.createdAt).toLocaleDateString('id-ID', {
+          day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const badgeClass = Orders.getStatusBadge(order.status);
+        const previewItems = order.items.slice(0, 3);
+
+        return `
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 hover:shadow-md transition">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="font-mono text-xs text-gray-400 dark:text-gray-500">${order.id}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${date}</p>
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeClass}">${order.status}</span>
+            </div>
+
+            <div class="flex gap-2 mb-3">
+              ${previewItems.map(i => `
+                <img src="${i.image}" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://via.placeholder.com/48?text=🥟'" title="${i.nama}">
+              `).join('')}
+              ${order.items.length > 3 ? `<div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400">+${order.items.length - 3}</div>` : ''}
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">${order.items.reduce((s, i) => s + i.qty, 0)} item · ${order.customer.payment}</p>
+                <p class="font-bold text-orange-600 dark:text-orange-400">${Utils.formatRupiah(order.total)}</p>
+              </div>
+              <button onclick="showDetail('${order.id}')"
+                class="text-sm bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 px-4 py-2 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/40 transition font-semibold">
+                Lihat Detail
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showDetail(orderId) {
+      const orders = Orders.getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const date = new Date(order.createdAt).toLocaleDateString('id-ID', {
+        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const badgeClass = Orders.getStatusBadge(order.status);
+
+      document.getElementById('detail-content').innerHTML = `
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Detail Pesanan</h2>
+        <p class="font-mono text-sm text-orange-500 mb-4">${order.id}</p>
+
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm text-gray-500 dark:text-gray-400">${date}</span>
+          <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeClass}">${order.status}</span>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-4">
+          <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">📍 Info Pengiriman</h3>
+          <p class="text-sm text-gray-800 dark:text-white font-semibold">${order.customer.name}</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">${order.customer.phone}</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">${order.customer.address}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Pembayaran: <span class="font-semibold text-gray-700 dark:text-gray-300">${order.customer.payment}</span></p>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">🛍 Item Pesanan</h3>
+          <div class="space-y-2">
+            ${order.items.map(i => `
+              <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <img src="${i.image}" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://via.placeholder.com/48?text=🥟'">
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-gray-800 dark:text-white">${i.nama}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${i.qty}x ${Utils.formatRupiah(i.price)}</p>
+                </div>
+                <p class="text-sm font-bold text-orange-600 dark:text-orange-400">${Utils.formatRupiah(i.price * i.qty)}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <hr class="border-gray-100 dark:border-gray-700 mb-3">
+        <div class="flex justify-between font-bold text-gray-800 dark:text-white">
+          <span>Total Pembayaran</span>
+          <span class="text-orange-600 dark:text-orange-400 text-lg">${Utils.formatRupiah(order.total)}</span>
+        </div>
+      `;
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal(e) {
+      if (e.target === document.getElementById('detail-modal')) {
+        document.getElementById('detail-modal').classList.add('hidden');
+      }
+    }
+
+    renderOrders();
+  </script>
+</body>
+</html>

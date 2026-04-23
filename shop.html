@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cireng Isi - Toko</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+  <style>
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <a href="shop.html" class="flex items-center gap-2 shrink-0">
+        <span class="text-2xl">🥟</span>
+        <span class="font-black text-orange-600 dark:text-orange-400 text-lg hidden sm:block">Cireng Isi</span>
+      </a>
+
+      <!-- Search -->
+      <div class="flex-1 max-w-md relative">
+        <input type="text" id="search-input" placeholder="Cari cireng..."
+          class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+        <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+      </div>
+
+      <!-- Nav links -->
+      <div class="flex items-center gap-2">
+        <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
+        <a href="cart.html" class="relative w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">
+          🛒
+          <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+        </a>
+        <a href="orders.html" class="hidden sm:flex w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 items-center justify-center text-lg hover:scale-110 transition-transform" title="Pesanan">📦</a>
+        <div class="relative">
+          <button id="user-btn" onclick="toggleDropdown()" class="flex items-center gap-1 bg-orange-500 text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-orange-600 transition">
+            <span>👤</span><span id="user-name" class="hidden sm:block">User</span><span class="text-xs ml-0.5">▾</span>
+          </button>
+          <div id="user-dropdown" class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 w-48 hidden z-50">
+            <a id="admin-link" href="admin.html" class="hidden items-center gap-2 px-4 py-3 text-sm font-semibold text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-t-xl">⚙️ Admin Panel</a>
+            <a href="orders.html" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">📦 Pesanan Saya</a>
+            <a href="#" onclick="showWishlist()" class="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">❤️ Wishlist</a>
+            <hr class="border-gray-100 dark:border-gray-700">
+            <button onclick="Auth.logout()" class="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-b-xl">🚪 Keluar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <div class="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 text-white py-10 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-black mb-2">Cireng Isi Terlezat! 🥟</h2>
+        <p class="text-orange-100 text-sm md:text-base">Berbagai pilihan isian, kenyal, gurih, dan bikin nagih.</p>
+        <p class="text-orange-200 text-xs mt-1">Gratis ongkir untuk pembelian di atas Rp 50.000</p>
+      </div>
+      <div class="text-7xl animate-bounce">🥟</div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Filters -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-3 items-center">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Kategori:</span>
+        <select id="filter-category"
+          class="text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          <option value="all">Semua</option>
+          <option value="pedas">🌶 Pedas</option>
+          <option value="original">🍗 Original</option>
+          <option value="vegetarian">🥦 Vegetarian</option>
+          <option value="manis">🍫 Manis</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Urutkan:</span>
+        <select id="filter-sort"
+          class="text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          <option value="">Default</option>
+          <option value="price-asc">Harga Terendah</option>
+          <option value="price-desc">Harga Tertinggi</option>
+          <option value="rating">Rating Terbaik</option>
+          <option value="popular">Terpopuler</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Harga:</span>
+        <input type="number" id="filter-min" placeholder="Min" min="0"
+          class="w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+        <span class="text-gray-400">-</span>
+        <input type="number" id="filter-max" placeholder="Max" min="0"
+          class="w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+      </div>
+      <button onclick="resetFilters()" class="text-sm text-orange-500 hover:text-orange-700 font-semibold ml-auto">Reset</button>
+      <span id="result-count" class="text-sm text-gray-400 dark:text-gray-500"></span>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <div class="text-6xl mb-4">🔍</div>
+      <p class="text-gray-500 dark:text-gray-400 text-lg font-semibold">Produk tidak ditemukan</p>
+      <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Coba kata kunci atau filter lain</p>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="flex justify-center gap-2 mt-8"></div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div id="product-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeModal(event)">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+      <button onclick="document.getElementById('product-modal').classList.add('hidden')"
+        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Wishlist Modal -->
+  <div id="wishlist-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeWishlistModal(event)">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6 relative">
+      <button onclick="document.getElementById('wishlist-modal').classList.add('hidden')"
+        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition">✕</button>
+      <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">❤️ Wishlist Saya</h2>
+      <div id="wishlist-content"></div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    const user = Utils.requireAuth();
+    if (user) {
+      document.getElementById('user-name').textContent = user.name.split(' ')[0];
+      Utils.initDarkMode();
+      Utils.updateCartBadge();
+      if (user.role === 'admin') {
+        const adminLink = document.getElementById('admin-link');
+        adminLink.classList.remove('hidden');
+        adminLink.classList.add('flex');
+      }
+    }
+
+    function toggleDropdown() {
+      const dd = document.getElementById('user-dropdown');
+      dd.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('user-btn');
+      const dd = document.getElementById('user-dropdown');
+      if (dd && !dd.classList.contains('hidden') && !btn.contains(e.target) && !dd.contains(e.target)) {
+        dd.classList.add('hidden');
+      }
+    });
+
+    const PAGE_SIZE = 8;
+    let currentPage = 1;
+    let filteredProducts = [];
+
+    async function init() {
+      await Products.load();
+      renderProducts();
+      setupFilters();
+    }
+
+    function getFilters() {
+      return {
+        search: document.getElementById('search-input').value,
+        category: document.getElementById('filter-category').value,
+        sort: document.getElementById('filter-sort').value,
+        minPrice: parseFloat(document.getElementById('filter-min').value) || 0,
+        maxPrice: parseFloat(document.getElementById('filter-max').value) || Infinity
+      };
+    }
+
+    function renderProducts() {
+      filteredProducts = Products.filter(getFilters());
+      const total = filteredProducts.length;
+      document.getElementById('result-count').textContent = `${total} produk`;
+
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const page = filteredProducts.slice(start, start + PAGE_SIZE);
+
+      const grid = document.getElementById('product-grid');
+      const empty = document.getElementById('empty-state');
+
+      if (page.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = page.map(p => Products.renderCard(p)).join('');
+      }
+
+      renderPagination(total);
+    }
+
+    function renderPagination(total) {
+      const pages = Math.ceil(total / PAGE_SIZE);
+      const container = document.getElementById('pagination');
+      if (pages <= 1) { container.innerHTML = ''; return; }
+
+      let html = '';
+      for (let i = 1; i <= pages; i++) {
+        html += `<button onclick="goPage(${i})"
+          class="w-9 h-9 rounded-lg text-sm font-semibold transition ${i === currentPage
+            ? 'bg-orange-500 text-white shadow'
+            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'}">${i}</button>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function goPage(p) {
+      currentPage = p;
+      renderProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupFilters() {
+      ['search-input', 'filter-category', 'filter-sort', 'filter-min', 'filter-max'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          currentPage = 1;
+          renderProducts();
+        });
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('filter-category').value = 'all';
+      document.getElementById('filter-sort').value = '';
+      document.getElementById('filter-min').value = '';
+      document.getElementById('filter-max').value = '';
+      currentPage = 1;
+      renderProducts();
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('product-modal')) {
+        document.getElementById('product-modal').classList.add('hidden');
+      }
+    }
+
+    function showWishlist() {
+      const list = Cart.getWishlist();
+      const content = document.getElementById('wishlist-content');
+      if (list.length === 0) {
+        content.innerHTML = `<div class="text-center py-10 text-gray-400"><div class="text-5xl mb-3">🤍</div><p>Wishlist masih kosong</p></div>`;
+      } else {
+        content.innerHTML = list.map(p => `
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            <img src="${p.image}" class="w-14 h-14 rounded-lg object-cover" onerror="this.src='https://via.placeholder.com/56?text=🥟'">
+            <div class="flex-1">
+              <p class="font-semibold text-gray-800 dark:text-white text-sm">${p.nama}</p>
+              <p class="text-orange-500 font-bold text-sm">${Utils.formatRupiah(p.price)}</p>
+            </div>
+            <div class="flex gap-1">
+              <button onclick="Products.handleAddToCart(${p.id})" class="text-xs bg-orange-500 text-white px-2 py-1 rounded-lg hover:bg-orange-600 transition">+ Cart</button>
+              <button onclick="Products.handleWishlist(${p.id}); showWishlist()" class="text-xs bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-lg hover:bg-gray-200 transition">✕</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      document.getElementById('wishlist-modal').classList.remove('hidden');
+    }
+
+    function closeWishlistModal(e) {
+      if (e.target === document.getElementById('wishlist-modal')) {
+        document.getElementById('wishlist-modal').classList.add('hidden');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

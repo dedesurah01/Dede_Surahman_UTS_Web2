@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cireng Isi - Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="shop.html" class="flex items-center gap-2">
+        <span class="text-2xl">🥟</span>
+        <span class="font-black text-orange-600 dark:text-orange-400 text-lg">Cireng Isi</span>
+      </a>
+      <div class="flex items-center gap-2">
+        <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
+        <a href="cart.html" class="text-sm text-orange-500 hover:text-orange-700 font-semibold">← Kembali ke Keranjang</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Steps -->
+  <div class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">1</div>
+        <span class="text-sm font-semibold text-orange-600 dark:text-orange-400">Keranjang</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-orange-300 dark:bg-orange-700 max-w-16"></div>
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">2</div>
+        <span class="text-sm font-semibold text-orange-600 dark:text-orange-400">Checkout</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-600 max-w-16"></div>
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-500 flex items-center justify-center text-xs font-bold">3</div>
+        <span class="text-sm text-gray-400 dark:text-gray-500">Selesai</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <div id="empty-cart" class="hidden text-center py-20">
+      <div class="text-6xl mb-4">🛒</div>
+      <p class="text-gray-500 dark:text-gray-400 text-lg font-semibold">Keranjang kosong</p>
+      <a href="shop.html" class="mt-4 inline-block bg-orange-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-orange-600 transition">Belanja Dulu</a>
+    </div>
+
+    <div id="checkout-content" class="hidden grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <!-- Form -->
+      <div class="lg:col-span-3">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+          <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-5">📋 Data Pengiriman</h2>
+          <form id="checkout-form" onsubmit="handleCheckout(event)" novalidate>
+            <div class="mb-4">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nama Penerima <span class="text-red-500">*</span></label>
+              <input type="text" id="co-name" required placeholder="Nama lengkap penerima"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+              <p class="text-red-500 text-xs mt-1 hidden" id="err-name">Nama wajib diisi</p>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">No. HP <span class="text-red-500">*</span></label>
+              <input type="tel" id="co-phone" required placeholder="08xxxxxxxxxx"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
+              <p class="text-red-500 text-xs mt-1 hidden" id="err-phone">Nomor HP wajib diisi (min. 10 digit)</p>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Alamat Lengkap <span class="text-red-500">*</span></label>
+              <textarea id="co-address" required rows="3" placeholder="Jl. Contoh No. 1, Kelurahan, Kecamatan, Kota"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 transition resize-none"></textarea>
+              <p class="text-red-500 text-xs mt-1 hidden" id="err-address">Alamat wajib diisi</p>
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Metode Pembayaran</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2 p-3 border-2 border-orange-400 rounded-xl cursor-pointer bg-orange-50 dark:bg-orange-900/20">
+                  <input type="radio" name="payment" value="COD" checked class="accent-orange-500">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">💵 COD</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:border-orange-300 transition">
+                  <input type="radio" name="payment" value="Transfer" class="accent-orange-500">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">🏦 Transfer</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:border-orange-300 transition">
+                  <input type="radio" name="payment" value="GoPay" class="accent-orange-500">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">💚 GoPay</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:border-orange-300 transition">
+                  <input type="radio" name="payment" value="OVO" class="accent-orange-500">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">💜 OVO</span>
+                </label>
+              </div>
+            </div>
+            <button type="submit"
+              class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition hover:shadow-lg active:scale-95 text-base">
+              ✅ Konfirmasi Pesanan
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-2">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 sticky top-20">
+          <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">🧾 Ringkasan</h2>
+          <div id="order-items" class="space-y-3 mb-4 max-h-64 overflow-y-auto"></div>
+          <hr class="border-gray-100 dark:border-gray-700 mb-3">
+          <div class="space-y-1.5 text-sm">
+            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+              <span>Subtotal</span><span id="co-subtotal">Rp 0</span>
+            </div>
+            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+              <span>Ongkir</span><span id="co-shipping" class="text-green-500 font-semibold">Gratis</span>
+            </div>
+            <div class="flex justify-between font-bold text-gray-800 dark:text-white text-base pt-1">
+              <span>Total</span><span id="co-total" class="text-orange-600 dark:text-orange-400">Rp 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="success-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md p-8 text-center">
+      <div class="text-6xl mb-4 animate-bounce">🎉</div>
+      <h2 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Pesanan Berhasil!</h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">Terima kasih sudah memesan di Cireng Isi</p>
+      <div class="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 mb-6">
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">ID Transaksi</p>
+        <p id="tx-id" class="font-mono font-bold text-orange-600 dark:text-orange-400 text-lg"></p>
+      </div>
+      <div class="flex gap-3">
+        <a href="orders.html" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition">Lihat Pesanan</a>
+        <a href="shop.html" class="flex-1 border-2 border-orange-500 text-orange-500 dark:text-orange-400 font-bold py-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/20 transition">Belanja Lagi</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script>
+    const user = Utils.requireAuth();
+    Utils.initDarkMode();
+
+    const FREE_SHIPPING = 50000;
+
+    function init() {
+      const items = Cart.getCart();
+      if (items.length === 0) {
+        document.getElementById('empty-cart').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('checkout-content').classList.remove('hidden');
+
+      // Pre-fill name
+      if (user) document.getElementById('co-name').value = user.name;
+
+      // Render items
+      document.getElementById('order-items').innerHTML = items.map(i => `
+        <div class="flex items-center gap-3">
+          <img src="${i.image}" class="w-12 h-12 rounded-lg object-cover shrink-0" onerror="this.src='https://via.placeholder.com/48?text=🥟'">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">${i.nama}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">${i.qty}x ${Utils.formatRupiah(i.price)}</p>
+          </div>
+          <p class="text-sm font-bold text-orange-600 dark:text-orange-400 shrink-0">${Utils.formatRupiah(i.price * i.qty)}</p>
+        </div>
+      `).join('');
+
+      const subtotal = Cart.getTotal();
+      const shipping = subtotal >= FREE_SHIPPING ? 0 : 10000;
+      document.getElementById('co-subtotal').textContent = Utils.formatRupiah(subtotal);
+      document.getElementById('co-shipping').textContent = shipping === 0 ? 'Gratis' : Utils.formatRupiah(shipping);
+      document.getElementById('co-total').textContent = Utils.formatRupiah(subtotal + shipping);
+
+      // Payment radio styling
+      document.querySelectorAll('input[name="payment"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          document.querySelectorAll('input[name="payment"]').forEach(r => {
+            r.closest('label').className = r.checked
+              ? 'flex items-center gap-2 p-3 border-2 border-orange-400 rounded-xl cursor-pointer bg-orange-50 dark:bg-orange-900/20'
+              : 'flex items-center gap-2 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:border-orange-300 transition';
+          });
+        });
+      });
+    }
+
+    function handleCheckout(e) {
+      e.preventDefault();
+      let valid = true;
+
+      const name = document.getElementById('co-name').value.trim();
+      const phone = document.getElementById('co-phone').value.trim();
+      const address = document.getElementById('co-address').value.trim();
+      const payment = document.querySelector('input[name="payment"]:checked').value;
+
+      const showErr = (id, show) => document.getElementById(id).classList.toggle('hidden', !show);
+
+      if (!name) { showErr('err-name', true); valid = false; } else showErr('err-name', false);
+      if (!phone || phone.replace(/\D/g, '').length < 10) { showErr('err-phone', true); valid = false; } else showErr('err-phone', false);
+      if (!address) { showErr('err-address', true); valid = false; } else showErr('err-address', false);
+
+      if (!valid) return;
+
+      const items = Cart.getCart();
+      const subtotal = Cart.getTotal();
+      const shipping = subtotal >= FREE_SHIPPING ? 0 : 10000;
+
+      const order = Orders.createOrder({
+        userId: user.id,
+        userName: user.name,
+        items,
+        total: subtotal + shipping,
+        customer: { name, phone, address, payment }
+      });
+
+      Cart.clearCart();
+      document.getElementById('tx-id').textContent = order.id;
+      document.getElementById('success-modal').classList.remove('hidden');
+    }
+
+    init();
+  </script>
+</body>
+</html>
