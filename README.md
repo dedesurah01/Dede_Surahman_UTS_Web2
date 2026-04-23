@@ -65,7 +65,7 @@ Sistem ini dibangun sebagai proyek **Full Client-Side** menggunakan arsitektur r
 
 Aplikasi telah berhasil dideploy dan dapat diakses secara publik melalui tautan berikut:
 
-👉 [**Live Demo Cireng Isi di GitHub Pages**]([https://dedesurah01.github.io/Dede_Surahman_UTS_Web2/])
+👉 [**Live Demo Cireng Isi di GitHub Pages**](https://dedesurah01.github.io/Dede_Surahman_UTS_Web2/)
 
 ---
 
@@ -95,7 +95,7 @@ cireng-shop/
 
 1. **Clone Repository**
 ```bash
-git clone https:[https://github.com/Dede_Surahman_UTS_Web2/]
+git clone https://github.com/phrdin/Pahrudin_UTS_Web2.git
 ```
 
 2. **Masuk ke folder project**
