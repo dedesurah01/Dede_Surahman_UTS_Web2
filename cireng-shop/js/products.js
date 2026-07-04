@@ -83,6 +83,12 @@ const Products = {
   rateProduct(productId, stars) {
     const user = Utils.getCurrentUser();
     if (!user) return;
+    // Save to API
+    apiFetch(API.ratings, {
+      method: 'POST',
+      body: JSON.stringify({ userId: user.id, productId, stars })
+    }).catch(() => {});
+    // Also save locally as cache
     const ratings = this.getRatings();
     ratings[`${user.id}_${productId}`] = stars;
     localStorage.setItem(this.RATINGS_KEY, JSON.stringify(ratings));

@@ -95,6 +95,7 @@
     </div>
   </div>
 
+  <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/cart.js"></script>
@@ -116,11 +117,11 @@
       btn.textContent = input.type === 'password' ? '👁' : '🙈';
     }
 
-    function handleLogin(e) {
+    async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
-      const result = Auth.login(email, password);
+      const result = await Auth.login(email, password);
       const errEl = document.getElementById('login-error');
       if (!result.success) {
         errEl.textContent = result.message;
@@ -134,12 +135,12 @@
       }, 800);
     }
 
-    function handleRegister(e) {
+    async function handleRegister(e) {
       e.preventDefault();
       const name = document.getElementById('reg-name').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
-      const result = Auth.register(name, email, password);
+      const result = await Auth.register(name, email, password);
       const errEl = document.getElementById('reg-error');
       if (!result.success) {
         errEl.textContent = result.message;

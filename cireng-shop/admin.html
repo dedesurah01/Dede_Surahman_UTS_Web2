@@ -151,24 +151,33 @@
 
     async function init() {
       await Products.load();
-      allOrders = Orders.getOrders();
+      allOrders = await Orders.getAllOrders();
       renderDashboard();
       renderAllOrders();
       renderUsers();
       renderAdminProducts();
     }
 
-    function renderDashboard() {
-      const orders = Orders.getOrders();
-      const users = Auth.getUsers();
-      const revenue = orders.reduce((s, o) => s + o.total, 0);
+    async function renderDashboard() {
+      // Ambil stats dari API
+      try {
+        const stats = await apiFetch(API.adminStats);
+        if (stats.success) {
+          document.getElementById('stat-orders').textContent = stats.data.totalOrders;
+          document.getElementById('stat-revenue').textContent = Utils.formatRupiah(stats.data.totalRevenue);
+          document.getElementById('stat-users').textContent = stats.data.totalUsers;
+          document.getElementById('stat-products').textContent = stats.data.totalProducts;
+        }
+      } catch {
+        const orders = Orders.getOrders();
+        const users = Auth.getUsers();
+        document.getElementById('stat-orders').textContent = orders.length;
+        document.getElementById('stat-revenue').textContent = Utils.formatRupiah(orders.reduce((s, o) => s + o.total, 0));
+        document.getElementById('stat-users').textContent = users.length;
+        document.getElementById('stat-products').textContent = Products.all.length;
+      }
 
-      document.getElementById('stat-orders').textContent = orders.length;
-      document.getElementById('stat-revenue').textContent = Utils.formatRupiah(revenue);
-      document.getElementById('stat-users').textContent = users.length;
-      document.getElementById('stat-products').textContent = Products.all.length;
-
-      const recent = orders.slice(0, 5);
+      const recent = allOrders.slice(0, 5);
       document.getElementById('recent-orders').innerHTML = recent.length === 0
         ? '<p class="text-gray-400 dark:text-gray-500 text-sm text-center py-4">Belum ada pesanan</p>'
         : recent.map(o => `
@@ -185,9 +194,9 @@
         `).join('');
     }
 
-    function renderAllOrders(filter = '') {
+    async function renderAllOrders(filter = '') {
       const orders = filter
-        ? allOrders.filter(o => o.id.toLowerCase().includes(filter) || o.customer.name.toLowerCase().includes(filter))
+        ? allOrders.filter(o => o.id?.toLowerCase().includes(filter) || o.orderId?.toLowerCase().includes(filter) || o.customer.name.toLowerCase().includes(filter))
         : allOrders;
 
       document.getElementById('all-orders').innerHTML = orders.length === 0
@@ -196,13 +205,13 @@
           <div class="border border-gray-100 dark:border-gray-700 rounded-xl p-4">
             <div class="flex items-start justify-between mb-2">
               <div>
-                <p class="font-mono text-xs text-gray-400 dark:text-gray-500">${o.id}</p>
+                <p class="font-mono text-xs text-gray-400 dark:text-gray-500">${o.orderId || o.id}</p>
                 <p class="font-semibold text-gray-800 dark:text-white text-sm">${o.customer.name} · ${o.customer.phone}</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">${o.customer.address}</p>
               </div>
               <div class="text-right shrink-0 ml-2">
                 <p class="font-bold text-orange-600 dark:text-orange-400">${Utils.formatRupiah(o.total)}</p>
-                <select onchange="updateOrderStatus('${o.id}', this.value)"
+                <select onchange="updateOrderStatus('${o.orderId || o.id}', this.value)"
                   class="text-xs border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-orange-400">
                   ${['Diproses','Dikirim','Selesai','Dibatalkan'].map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
                 </select>
@@ -213,15 +222,9 @@
         `).join('');
     }
 
-    function updateOrderStatus(orderId, status) {
-      const orders = Orders.getOrders();
-      const order = orders.find(o => o.id === orderId);
-      if (order) {
-        order.status = status;
-        localStorage.setItem(Orders.ORDERS_KEY, JSON.stringify(orders));
-        allOrders = orders;
-        Utils.showToast(`Status diperbarui: ${status}`, 'success');
-      }
+    async function updateOrderStatus(orderId, status) {
+      await Orders.updateStatus(orderId, status);
+      Utils.showToast(`Status diperbarui: ${status}`, 'success');
     }
 
     function renderUsers() {

@@ -1,8 +1,15 @@
-// Cart module
+// Cart & Wishlist module — integrated with Railway API
 
 const Cart = {
+  // LocalStorage keys sebagai cache lokal
   CART_KEY: 'cireng_cart',
   WISHLIST_KEY: 'cireng_wishlist',
+
+  _getUser() {
+    return Utils.getCurrentUser();
+  },
+
+  // ─── CART ──────────────────────────────────────────────────
 
   getCart() {
     return JSON.parse(localStorage.getItem(this.CART_KEY) || '[]');
@@ -12,41 +19,77 @@ const Cart = {
     localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
   },
 
-  addItem(product, qty = 1) {
+  async addItem(product, qty = 1) {
+    const user = this._getUser();
+    if (user) {
+      try {
+        const res = await apiFetch(API.cart(user.id), {
+          method: 'POST',
+          body: JSON.stringify({ product, qty })
+        });
+        if (res.success) {
+          this.saveCart(res.data);
+          Utils.updateCartBadge();
+          return;
+        }
+      } catch {}
+    }
+    // Fallback LocalStorage
     const cart = this.getCart();
     const existing = cart.find(i => i.id === product.id);
-    if (existing) {
-      existing.qty += qty;
-    } else {
-      cart.push({ ...product, qty });
+    if (existing) { existing.qty += qty; } else { cart.push({ ...product, qty }); }
+    this.saveCart(cart);
+    Utils.updateCartBadge();
+  },
+
+  async removeItem(productId) {
+    const user = this._getUser();
+    if (user) {
+      try {
+        const res = await apiFetch(API.cartItem(user.id, productId), { method: 'DELETE' });
+        if (res.success) { this.saveCart(res.data); Utils.updateCartBadge(); return; }
+      } catch {}
     }
-    this.saveCart(cart);
+    this.saveCart(this.getCart().filter(i => i.id !== productId));
     Utils.updateCartBadge();
   },
 
-  removeItem(productId) {
-    const cart = this.getCart().filter(i => i.id !== productId);
-    this.saveCart(cart);
-    Utils.updateCartBadge();
-  },
-
-  updateQty(productId, qty) {
+  async updateQty(productId, qty) {
+    if (qty <= 0) { await this.removeItem(productId); return; }
+    const user = this._getUser();
+    if (user) {
+      try {
+        const res = await apiFetch(API.cartItem(user.id, productId), {
+          method: 'PUT',
+          body: JSON.stringify({ qty })
+        });
+        if (res.success) { this.saveCart(res.data); Utils.updateCartBadge(); return; }
+      } catch {}
+    }
     const cart = this.getCart();
     const item = cart.find(i => i.id === productId);
-    if (item) {
-      if (qty <= 0) {
-        this.removeItem(productId);
-        return;
-      }
-      item.qty = qty;
-      this.saveCart(cart);
-    }
+    if (item) { item.qty = qty; this.saveCart(cart); }
     Utils.updateCartBadge();
   },
 
-  clearCart() {
+  async clearCart() {
+    const user = this._getUser();
+    if (user) {
+      try {
+        await apiFetch(API.cart(user.id), { method: 'DELETE' });
+      } catch {}
+    }
     localStorage.removeItem(this.CART_KEY);
     Utils.updateCartBadge();
+  },
+
+  async syncFromAPI() {
+    const user = this._getUser();
+    if (!user) return;
+    try {
+      const res = await apiFetch(API.cart(user.id));
+      if (res.success) { this.saveCart(res.data); Utils.updateCartBadge(); }
+    } catch {}
   },
 
   getTotal() {
@@ -57,30 +100,47 @@ const Cart = {
     return this.getCart().reduce((sum, i) => sum + i.qty, 0);
   },
 
-  // Wishlist
+  // ─── WISHLIST ───────────────────────────────────────────────
+
   getWishlist() {
     return JSON.parse(localStorage.getItem(this.WISHLIST_KEY) || '[]');
   },
 
-  toggleWishlist(product) {
+  saveWishlist(list) {
+    localStorage.setItem(this.WISHLIST_KEY, JSON.stringify(list));
+  },
+
+  async toggleWishlist(product) {
+    const user = this._getUser();
+    if (user) {
+      try {
+        const res = await apiFetch(API.wishlist(user.id), {
+          method: 'POST',
+          body: JSON.stringify({ product })
+        });
+        if (res.success) {
+          this.saveWishlist(res.data);
+          return res.added;
+        }
+      } catch {}
+    }
+    // Fallback LocalStorage
     const list = this.getWishlist();
     const idx = list.findIndex(i => i.id === product.id);
-    if (idx >= 0) {
-      list.splice(idx, 1);
-      this.saveWishlist(list);
-      return false;
-    } else {
-      list.push(product);
-      this.saveWishlist(list);
-      return true;
-    }
+    if (idx >= 0) { list.splice(idx, 1); this.saveWishlist(list); return false; }
+    list.push(product); this.saveWishlist(list); return true;
   },
 
   isWishlisted(productId) {
     return this.getWishlist().some(i => i.id === productId);
   },
 
-  saveWishlist(list) {
-    localStorage.setItem(this.WISHLIST_KEY, JSON.stringify(list));
+  async syncWishlistFromAPI() {
+    const user = this._getUser();
+    if (!user) return;
+    try {
+      const res = await apiFetch(API.wishlist(user.id));
+      if (res.success) this.saveWishlist(res.data);
+    } catch {}
   }
 };

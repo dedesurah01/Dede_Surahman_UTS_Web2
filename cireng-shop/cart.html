@@ -81,6 +81,7 @@
     </div>
   </div>
 
+  <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/cart.js"></script>
@@ -88,10 +89,12 @@
     Utils.requireAuth();
     Utils.initDarkMode();
 
+    async function renderCart() {
+      // Sync cart dari API dulu
+      await Cart.syncFromAPI();
+      const items = Cart.getCart();
     const FREE_SHIPPING_THRESHOLD = 50000;
 
-    function renderCart() {
-      const items = Cart.getCart();
       const empty = document.getElementById('cart-empty');
       const content = document.getElementById('cart-content');
 
@@ -157,20 +160,20 @@
       }
     }
 
-    function changeQty(id, qty) {
-      Cart.updateQty(id, qty);
+    async function changeQty(id, qty) {
+      await Cart.updateQty(id, qty);
       renderCart();
     }
 
-    function removeItem(id) {
-      Cart.removeItem(id);
+    async function removeItem(id) {
+      await Cart.removeItem(id);
       Utils.showToast('Item dihapus dari keranjang', 'info');
       renderCart();
     }
 
-    function clearCartConfirm() {
+    async function clearCartConfirm() {
       if (confirm('Yakin ingin mengosongkan keranjang?')) {
-        Cart.clearCart();
+        await Cart.clearCart();
         renderCart();
         Utils.showToast('Keranjang dikosongkan', 'info');
       }
