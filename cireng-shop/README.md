@@ -67,6 +67,8 @@ Aplikasi telah berhasil dideploy dan dapat diakses secara publik melalui tautan 
 
 👉 [**Live Demo Cireng Isi di GitHub Pages**](https://dedesurah01.github.io/Dede_Surahman_UTS_Web2/)
 
+🔌 [**Backend API (Railway)**](https://dedesurahmanutsweb2-production.up.railway.app)
+
 ---
 
 ## 🗂️ Struktur Project
