@@ -7,8 +7,17 @@ const Products = {
 
   async load() {
     if (this.all.length) return this.all;
-    const res = await fetch('data/products.json');
-    this.all = await res.json();
+    try {
+      // Ambil produk dari Railway API
+      const res = await fetch(typeof API !== 'undefined' ? API.products : 'data/products.json');
+      const json = await res.json();
+      // Railway API mengembalikan { success, data } — JSON file langsung array
+      this.all = json.data || json;
+    } catch (error) {
+      console.warn('API tidak tersedia, fallback ke JSON lokal');
+      const res = await fetch('data/products.json');
+      this.all = await res.json();
+    }
     return this.all;
   },
 
