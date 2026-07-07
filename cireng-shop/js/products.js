@@ -103,7 +103,7 @@ const Products = {
       <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col" data-id="${product.id}">
         <div class="relative overflow-hidden">
           <img src="${imgSrc}" alt="${product.nama}"
-            class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            class="w-full aspect-[4/3] object-cover object-center group-hover:scale-105 transition-transform duration-300"
             onerror="this.src='https://via.placeholder.com/400x300?text=Cireng'">
           <button onclick="Products.handleWishlist(${product.id})" 
             class="absolute top-2 right-2 w-9 h-9 rounded-full bg-white dark:bg-gray-700 shadow flex items-center justify-center text-lg hover:scale-110 transition-transform wishlist-btn-${product.id}">
@@ -112,22 +112,22 @@ const Products = {
           <span class="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full capitalize">${product.category}</span>
           ${product.stock <= 10 ? `<span class="absolute bottom-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">Stok Terbatas!</span>` : ''}
         </div>
-        <div class="p-4 flex flex-col flex-1">
+        <div class="p-3 sm:p-4 flex flex-col flex-1">
           <h3 class="font-bold text-gray-800 dark:text-white text-sm mb-1 line-clamp-2">${product.nama}</h3>
           <p class="text-gray-500 dark:text-gray-400 text-xs mb-2 line-clamp-2 flex-1">${product.description}</p>
-          <div class="flex items-center gap-1 mb-2">
+          <div class="flex flex-wrap items-center gap-1 mb-2">
             <span class="text-yellow-400 text-sm">${Utils.renderStars(product.rating)}</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">(${product.rating}) · ${product.sold} terjual</span>
           </div>
-          <div class="flex items-center justify-between mt-auto">
-            <span class="text-orange-600 dark:text-orange-400 font-bold text-base">${Utils.formatRupiah(product.price)}</span>
-            <div class="flex gap-1">
+          <div class="flex flex-col gap-2 mt-auto">
+            <span class="text-orange-600 dark:text-orange-400 font-bold text-sm sm:text-base whitespace-nowrap">${Utils.formatRupiah(product.price)}</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 w-full">
               <button onclick="Products.showDetail(${product.id})"
-                class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                class="w-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                 Detail
               </button>
               <button onclick="Products.handleAddToCart(${product.id})"
-                class="text-xs bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg transition font-semibold">
+                class="w-full text-xs bg-orange-500 hover:bg-orange-600 text-white px-2 py-2 rounded-lg transition font-semibold whitespace-nowrap">
                 + Keranjang
               </button>
             </div>
@@ -172,19 +172,19 @@ const Products = {
     const content = document.getElementById('modal-content');
 
     content.innerHTML = `
-      <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
         <img src="${imgSrc}" alt="${product.nama}" 
-          class="w-full md:w-64 h-56 md:h-64 object-cover rounded-xl"
+          class="w-full md:w-64 h-52 sm:h-56 md:h-64 object-cover rounded-xl"
           onerror="this.src='https://via.placeholder.com/400x300?text=Cireng'">
         <div class="flex-1">
           <span class="bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300 text-xs font-bold px-2 py-1 rounded-full capitalize">${product.category}</span>
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-white mt-2">${product.nama}</h2>
-          <div class="flex items-center gap-2 my-2">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mt-2">${product.nama}</h2>
+          <div class="flex flex-wrap items-center gap-2 my-2">
             <span class="text-yellow-400 text-lg">${Utils.renderStars(product.rating)}</span>
             <span class="text-sm text-gray-500 dark:text-gray-400">${product.rating} · ${product.sold} terjual</span>
           </div>
           <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">${product.description}</p>
-          <p class="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-2">${Utils.formatRupiah(product.price)}</p>
+          <p class="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400 mb-2">${Utils.formatRupiah(product.price)}</p>
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Stok: <span class="${product.stock <= 10 ? 'text-red-500 font-bold' : 'text-green-600 font-bold'}">${product.stock} pcs</span></p>
           
           <div class="mb-4">
@@ -198,7 +198,7 @@ const Products = {
             </div>
           </div>
 
-          <div class="flex gap-2">
+          <div class="flex flex-col sm:flex-row gap-2">
             <button onclick="Products.handleWishlist(${product.id}); document.getElementById('product-modal').classList.add('hidden')"
               class="flex-1 border-2 border-orange-500 text-orange-500 dark:text-orange-400 py-2 rounded-xl font-semibold hover:bg-orange-50 dark:hover:bg-orange-900/20 transition">
               ${Cart.isWishlisted(product.id) ? '❤️ Wishlisted' : '🤍 Wishlist'}

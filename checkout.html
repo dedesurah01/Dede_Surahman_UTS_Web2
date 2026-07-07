@@ -194,6 +194,22 @@
       });
     }
 
+    const PAYMENT_APP_LINKS = {
+      Transfer: 'https://m.klikbca.com',
+      GoPay: 'gojek://gopay',
+      OVO: 'ovo://'
+    };
+
+    function openPaymentApp(payment) {
+      const paymentUrl = PAYMENT_APP_LINKS[payment];
+      if (!paymentUrl) return;
+
+      Utils.showToast(`Membuka aplikasi ${payment}...`, 'success');
+      setTimeout(() => {
+        window.location.href = paymentUrl;
+      }, 800);
+    }
+
     async function handleCheckout(e) {
       e.preventDefault();
       let valid = true;
@@ -227,6 +243,7 @@
         await Cart.clearCart();
         document.getElementById('tx-id').textContent = result.order.id || result.order.orderId;
         document.getElementById('success-modal').classList.remove('hidden');
+        openPaymentApp(payment);
       } else {
         Utils.showToast(result.message || 'Gagal membuat pesanan', 'error');
       }

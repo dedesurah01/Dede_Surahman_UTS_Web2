@@ -11,20 +11,20 @@
 
   <!-- Navbar -->
   <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <a href="shop.html" class="flex items-center gap-2">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-3 sm:gap-4">
+      <a href="shop.html" class="flex items-center gap-2 min-w-0">
         <span class="text-2xl">🥟</span>
-        <span class="font-black text-orange-600 dark:text-orange-400 text-lg">Cireng Isi</span>
+        <span class="font-black text-orange-600 dark:text-orange-400 text-base sm:text-lg truncate">Cireng Isi</span>
       </a>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 shrink-0">
         <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
-        <a href="shop.html" class="text-sm text-orange-500 hover:text-orange-700 font-semibold">← Lanjut Belanja</a>
+        <a href="shop.html" class="text-xs sm:text-sm text-orange-500 hover:text-orange-700 font-semibold">← Lanjut Belanja</a>
       </div>
     </div>
   </nav>
 
-  <div class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-black text-gray-800 dark:text-white mb-6">🛒 Keranjang Belanja</h1>
+  <div class="max-w-5xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+    <h1 class="text-xl sm:text-2xl font-black text-gray-800 dark:text-white mb-5 sm:mb-6">🛒 Keranjang Belanja</h1>
 
     <div id="cart-empty" class="hidden text-center py-20">
       <div class="text-7xl mb-4">🛒</div>
@@ -33,13 +33,13 @@
       <a href="shop.html" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-xl transition inline-block">Mulai Belanja</a>
     </div>
 
-    <div id="cart-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div id="cart-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <!-- Cart Items -->
       <div class="lg:col-span-2 space-y-3" id="cart-items"></div>
 
       <!-- Summary -->
       <div class="lg:col-span-1">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 sticky top-20">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 sm:p-6 lg:sticky lg:top-20">
           <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Ringkasan Pesanan</h2>
           
           <div class="space-y-2 mb-4 text-sm">
@@ -86,6 +86,8 @@
   <script src="js/auth.js"></script>
   <script src="js/cart.js"></script>
   <script>
+    const FREE_SHIPPING_THRESHOLD = 50000;
+
     Utils.requireAuth();
     Utils.initDarkMode();
 
@@ -93,7 +95,6 @@
       // Sync cart dari API dulu
       await Cart.syncFromAPI();
       const items = Cart.getCart();
-    const FREE_SHIPPING_THRESHOLD = 50000;
 
       const empty = document.getElementById('cart-empty');
       const content = document.getElementById('cart-content');
@@ -108,15 +109,15 @@
       content.classList.remove('hidden');
 
       document.getElementById('cart-items').innerHTML = items.map(item => `
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 flex gap-4 items-center" id="item-${item.id}">
-          <img src="${item.image}" alt="${item.nama}" class="w-20 h-20 rounded-xl object-cover shrink-0"
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-3 sm:p-4 flex flex-col min-[420px]:flex-row gap-3 sm:gap-4 min-[420px]:items-center" id="item-${item.id}">
+          <img src="${item.image}" alt="${item.nama}" class="w-full min-[420px]:w-20 h-40 min-[420px]:h-20 rounded-xl object-cover shrink-0"
             onerror="this.src='https://via.placeholder.com/80?text=🥟'">
           <div class="flex-1 min-w-0">
             <h3 class="font-bold text-gray-800 dark:text-white text-sm truncate">${item.nama}</h3>
             <p class="text-orange-500 font-bold text-sm mt-0.5">${Utils.formatRupiah(item.price)}</p>
             <p class="text-gray-400 text-xs capitalize">${item.category}</p>
           </div>
-          <div class="flex flex-col items-end gap-2 shrink-0">
+          <div class="flex min-[420px]:flex-col items-center min-[420px]:items-end justify-between gap-2 shrink-0">
             <button onclick="removeItem(${item.id})" class="text-red-400 hover:text-red-600 text-sm transition">🗑</button>
             <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-xl px-2 py-1">
               <button onclick="changeQty(${item.id}, ${item.qty - 1})" class="w-6 h-6 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-orange-500 font-bold text-lg transition">−</button>

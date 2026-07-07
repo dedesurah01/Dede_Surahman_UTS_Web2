@@ -45,11 +45,13 @@
     <!-- Main -->
     <div class="flex-1 flex flex-col min-w-0">
       <!-- Top bar -->
-      <header class="bg-white dark:bg-gray-800 shadow-sm px-4 py-3 flex items-center justify-between">
+      <header class="bg-white dark:bg-gray-800 shadow-sm px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
         <h1 id="page-title" class="text-lg font-bold text-gray-800 dark:text-white">Dashboard</h1>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="shop.html" class="md:hidden w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform" title="Lihat Toko">🏪</a>
           <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
-          <span id="admin-name" class="text-sm font-semibold text-gray-700 dark:text-gray-300"></span>
+          <span id="admin-name" class="hidden sm:inline text-sm font-semibold text-gray-700 dark:text-gray-300"></span>
+          <button onclick="Auth.logout()" class="md:hidden w-9 h-9 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-lg text-red-500 hover:scale-110 transition-transform" title="Keluar">🚪</button>
         </div>
       </header>
 

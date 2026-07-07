@@ -14,21 +14,21 @@
 
   <!-- Navbar -->
   <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-4">
       <a href="shop.html" class="flex items-center gap-2 shrink-0">
         <span class="text-2xl">🥟</span>
         <span class="font-black text-orange-600 dark:text-orange-400 text-lg hidden sm:block">Cireng Isi</span>
       </a>
 
       <!-- Search -->
-      <div class="flex-1 max-w-md relative">
+      <div class="order-3 md:order-none w-full md:flex-1 md:max-w-md relative">
         <input type="text" id="search-input" placeholder="Cari cireng..."
           class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition">
         <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
       </div>
 
       <!-- Nav links -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <button id="dark-toggle" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">🌙</button>
         <a href="cart.html" class="relative w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg hover:scale-110 transition-transform">
           🛒
@@ -36,7 +36,7 @@
         </a>
         <a href="orders.html" class="hidden sm:flex w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 items-center justify-center text-lg hover:scale-110 transition-transform" title="Pesanan">📦</a>
         <div class="relative">
-          <button id="user-btn" onclick="toggleDropdown()" class="flex items-center gap-1 bg-orange-500 text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-orange-600 transition">
+          <button id="user-btn" onclick="toggleDropdown()" class="flex items-center gap-1 bg-orange-500 text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-orange-600 transition">
             <span>👤</span><span id="user-name" class="hidden sm:block">User</span><span class="text-xs ml-0.5">▾</span>
           </button>
           <div id="user-dropdown" class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 w-48 hidden z-50">
@@ -52,24 +52,24 @@
   </nav>
 
   <!-- Hero Banner -->
-  <div class="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 text-white py-10 px-4">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div>
-        <h2 class="text-3xl md:text-4xl font-black mb-2">Cireng Isi Terlezat! 🥟</h2>
+  <div class="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 text-white py-8 sm:py-10 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-6">
+      <div class="max-w-2xl">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-2 leading-tight">Cireng Isi Terlezat! 🥟</h2>
         <p class="text-orange-100 text-sm md:text-base">Berbagai pilihan isian, kenyal, gurih, dan bikin nagih.</p>
         <p class="text-orange-200 text-xs mt-1">Gratis ongkir untuk pembelian di atas Rp 50.000</p>
       </div>
-      <div class="text-7xl animate-bounce">🥟</div>
+      <div class="hidden sm:block text-6xl md:text-7xl animate-bounce self-center">🥟</div>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-6">
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap gap-3 items-center">
-      <div class="flex items-center gap-2">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-3 sm:p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr_auto_auto] gap-3 items-end">
+      <div class="flex flex-col min-[420px]:flex-row min-[420px]:items-center gap-1.5 min-[420px]:gap-2">
         <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Kategori:</span>
         <select id="filter-category"
-          class="text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          class="w-full min-[420px]:w-auto text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-2 sm:py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
           <option value="all">Semua</option>
           <option value="pedas">🌶 Pedas</option>
           <option value="original">🍗 Original</option>
@@ -77,10 +77,10 @@
           <option value="manis">🍫 Manis</option>
         </select>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-col min-[420px]:flex-row min-[420px]:items-center gap-1.5 min-[420px]:gap-2">
         <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Urutkan:</span>
         <select id="filter-sort"
-          class="text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          class="w-full min-[420px]:w-auto text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-3 py-2 sm:py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
           <option value="">Default</option>
           <option value="price-asc">Harga Terendah</option>
           <option value="price-desc">Harga Tertinggi</option>
@@ -88,20 +88,22 @@
           <option value="popular">Terpopuler</option>
         </select>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="sm:col-span-2 lg:col-span-1 flex flex-col min-[420px]:flex-row min-[420px]:items-center gap-1.5 min-[420px]:gap-2">
         <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Harga:</span>
+        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 w-full min-[420px]:w-auto">
         <input type="number" id="filter-min" placeholder="Min" min="0"
-          class="w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          class="w-full min-[420px]:w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-2 sm:py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
         <span class="text-gray-400">-</span>
         <input type="number" id="filter-max" placeholder="Max" min="0"
-          class="w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+          class="w-full min-[420px]:w-24 text-sm border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg px-2 py-2 sm:py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
+        </div>
       </div>
-      <button onclick="resetFilters()" class="text-sm text-orange-500 hover:text-orange-700 font-semibold ml-auto">Reset</button>
-      <span id="result-count" class="text-sm text-gray-400 dark:text-gray-500"></span>
+      <button onclick="resetFilters()" class="w-full lg:w-auto text-sm text-orange-500 hover:text-orange-700 font-semibold py-2 lg:py-0">Reset</button>
+      <span id="result-count" class="text-sm text-gray-400 dark:text-gray-500 text-center lg:text-left"></span>
     </div>
 
     <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"></div>
 
     <!-- Empty state -->
     <div id="empty-state" class="hidden text-center py-20">
@@ -116,7 +118,7 @@
 
   <!-- Product Detail Modal -->
   <div id="product-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeModal(event)">
-    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 relative">
       <button onclick="document.getElementById('product-modal').classList.add('hidden')"
         class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition">✕</button>
       <div id="modal-content"></div>
@@ -125,7 +127,7 @@
 
   <!-- Wishlist Modal -->
   <div id="wishlist-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeWishlistModal(event)">
-    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6 relative">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-4 sm:p-6 relative">
       <button onclick="document.getElementById('wishlist-modal').classList.add('hidden')"
         class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition">✕</button>
       <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">❤️ Wishlist Saya</h2>
